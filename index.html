@@ -1,11 +1,18 @@
-<script src="https://cdn.tailwindcss.com" defer></script>
-<script src="//unpkg.com/alpinejs" defer></script>
+<script src="/tailwindcss.js" defer></script>
+<script src="/node_modules/alpinejs/dist/cdn.min.js" defer></script>
+<script src="/node_modules/axios/dist/axios.min.js"></script>
 
 <script>
     document.addEventListener('alpine:init', () => {
+        const yank= axios.create({
+            baseURL: 'http://localhost:4000',
+        })
+
         Alpine.data('data', () => ({
+          users: yank.get('/users'),
           count: 0,
           add() {
+              console.log(this.users)
             this.count++
           },
           substract() {
