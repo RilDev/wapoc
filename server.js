@@ -8,14 +8,14 @@ const getFile = filePath => fs.readFileSync(path.join(__dirname, filePath))
 
 // prepare scripts to inject
 const files = [
-  ".wapoc/live-reload.js",
-  ".wapoc/tailwindcss.js",
-  "node_modules/alpinejs/dist/cdn.min.js",
-  "node_modules/axios/dist/axios.min.js",
-  ".wapoc/yank.js", // must be loaded after axios
+  { path: ".wapoc/live-reload.js" },
+  { path: ".wapoc/tailwindcss.js" },
+  { path: "node_modules/alpinejs/dist/cdn.min.js", defer: true },
+  { path: "node_modules/axios/dist/axios.min.js" },
+  { path: ".wapoc/yank.js" }, // must be loaded after axios
 ]
 
-const filesToInject = "<body>" + files.reduce((full, filePath) => full + `<script src="${filePath}" defer></script>\n\n`, "") + "</body>"
+const filesToInject = "<body>" + files.reduce((full, file) => full + `<script src="${file.path}" ${file.defer ? "defer" : ""}></script>\n\n`, "") + "</body>"
 
 // catch all get requests
 app.get('/*', function (req, res) {

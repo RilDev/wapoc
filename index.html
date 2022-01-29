@@ -1,24 +1,41 @@
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('state', () => ({
-          count: 0,
-          add() {
-            this.count++
-          },
-          substract() {
-            this.count--
-          }
-        }))
-    })
+  document.addEventListener('alpine:init', () => {
+      Alpine.data('state', () => ({
+        async getUsers() {
+          const response = await yank.get("users")
+          console.log(response.data)
+          return response.data
+        },
+        count: 0,
+        async add() {
+          this.count++
+        },
+        substract() {
+          this.count--
+        }
+      }))
+  })
 </script>
 
 <div x-data="state" class="text-center px-4 py-12">
-  <h1 class="font-bold text-4xl mb-6">WAPOC</h1>
-  <p class="mb-12">Web App Proof Of Concept</p>
+<h1 class="font-bold text-4xl mb-6">WAPOC</h1>
+<p class="mb-12">Web App Proof Of Concept</p>
+<div>
+  <button @click="substract" class="bg-blue-500 text-white w-14 h-14 rounded text-4xl">-</button>
+  <span x-text="count" class="w-24 inline-block text-4xl"></span>
+  <button @click="add" class="bg-blue-500 text-white w-14 h-14 rounded text-4xl">+</button>
+</div>
+
+<div>
   <div>
-    <button @click="substract" class="bg-blue-500 text-white w-14 h-14 rounded text-4xl">-</button>
-    <span x-text="count" class="w-24 inline-block text-4xl"></span>
-    <button @click="add" class="bg-blue-500 text-white w-14 h-14 rounded text-4xl">+</button>
+    <div> id </div>
+    <div> username </div>
   </div>
+  <template x-for="user in await getUsers()">
+    <div>
+      <div x-text="user.id"></div>
+      <div x-text="user.name"></div>
+    </div>
+  </template>
 </div>
 
