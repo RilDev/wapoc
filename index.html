@@ -1,8 +1,4 @@
-<script src="/tailwindcss.js" defer></script>
-<script src="/node_modules/alpinejs/dist/cdn.min.js" defer></script>
-<script src="/node_modules/axios/dist/axios.min.js"></script>
-
-<script>
+<script defer>
     document.addEventListener('alpine:init', () => {
         const yank= axios.create({
             baseURL: 'http://localhost:4000',

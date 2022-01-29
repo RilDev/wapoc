@@ -4,8 +4,17 @@ const path = require('path')
 const WebSocket = require('ws')
 const app = express()
 
-// load the live-reload script to inject it in the served html files
-const liveReload = fs.readFileSync(path.join(__dirname, "live-reload.js"))
+const getFile = filePath => fs.readFileSync(path.join(__dirname, filePath))
+
+// prepare scripts to inject
+const files = [
+  "live-reload.js", 
+  "tailwindcss.js", 
+  "node_modules/alpinejs/dist/cdn.min.js", 
+  "node_modules/axios/dist/axios.min.js"
+]
+
+const filesToInject = files.reduce((full, filePath) => `<script src="${filePath}" defer></script>\n\n` + full, "")
 
 // catch all get requests
 app.get('/*', function (req, res) {
@@ -21,19 +30,19 @@ const servePage = (route, res) => {
     }
 
     // load page to serve
-    let file = fs.readFileSync(path.join(__dirname, route))
+    let file = getFile(route)
 
     // if page is html file, append live reload script
     if (route.endsWith('.html')) {
-      file = `<script>${liveReload}</script>\n\n${file.toString()}`
+      file = filesToInject + file
     }
 
     // send page
     res.status(200).end(file)
   } else {
     // if the route doesn't match any file, serve 404 page
-    let file = fs.readFileSync(path.join(__dirname, '404.html'))
-    file = `<script>${liveReload}</script>\n\n${file.toString()}`
+    let file = getFile('404.html')
+    file = filesToInject + file
 
     res.status(404).end(file)
   }
