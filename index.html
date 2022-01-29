@@ -1,14 +1,8 @@
-<script defer>
+<script>
     document.addEventListener('alpine:init', () => {
-        const yank= axios.create({
-            baseURL: 'http://localhost:4000',
-        })
-
-        Alpine.data('data', () => ({
-          users: yank.get('/users'),
+        Alpine.data('state', () => ({
           count: 0,
           add() {
-              console.log(this.users)
             this.count++
           },
           substract() {
@@ -18,7 +12,7 @@
     })
 </script>
 
-<div x-data="data" class="text-center px-4 py-12">
+<div x-data="state" class="text-center px-4 py-12">
   <h1 class="font-bold text-4xl mb-6">WAPOC</h1>
   <p class="mb-12">Web App Proof Of Concept</p>
   <div>
@@ -27,3 +21,4 @@
     <button @click="add" class="bg-blue-500 text-white w-14 h-14 rounded text-4xl">+</button>
   </div>
 </div>
+
