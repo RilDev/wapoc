@@ -20,22 +20,30 @@
 <div x-data="state" class="text-center px-4 py-12">
 <h1 class="font-bold text-4xl mb-6">WAPOC</h1>
 <p class="mb-12">Web App Proof Of Concept</p>
-<div>
+
+<div class="mb-12">
   <button @click="substract" class="bg-blue-500 text-white w-14 h-14 rounded text-4xl">-</button>
   <span x-text="count" class="w-24 inline-block text-4xl"></span>
   <button @click="add" class="bg-blue-500 text-white w-14 h-14 rounded text-4xl">+</button>
 </div>
 
-<div>
-  <div>
-    <div> id </div>
-    <div> username </div>
-  </div>
-  <template x-for="user in await getUsers()">
-    <div>
-      <div x-text="user.id"></div>
-      <div x-text="user.name"></div>
+<div class="table w-full border-collapse">
+  <div class="table-header-group bg-blue-500 text-white">
+    <div class="table-row text-xl">
+      <div class="table-cell p-4 rounded-tl">id</div>
+      <div class="table-cell p-4">username</div>
+      <div class="table-cell p-4">password</div>
+      <div class="table-cell p-4 rounded-tr">created at</div>
     </div>
-  </template>
+  </div>
+  <div class="table-row-group">
+    <template x-for="user in await getUsers()">
+      <div class="table-row">
+        <div class="table-cell py-2 border" x-text="user.id"></div>
+        <div class="table-cell py-2 border" x-text="user.name"></div>
+        <div class="table-cell py-2 border" x-text="user.password"></div>
+        <div class="table-cell py-2 border" x-text="user.createdAt"></div>
+      </div>
+    </template>
+  </div>
 </div>
-
