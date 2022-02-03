@@ -11,7 +11,7 @@
 
 <!-- Users' Table -->
 <div 
-  x-data="{users: []}" 
+  x-data="{users: [], isModalOpen: false, name: '', password: ''}" 
   x-init="yank.get('users').then(response => users = response.data)"
   x-cloak
   >
@@ -35,7 +35,28 @@
       </template>
     </div>
   </div>
-  <button x-show="users.length" class="w-full border border-t-0 rounded-bl rounded-br bg-green-500 text-white text-2xl py-2">+</button>
+  <button x-show="users.length" @click="isModalOpen = true" class="w-full border border-t-0 rounded-bl rounded-br bg-green-500 text-white text-2xl py-2">+</button>
 
   <div x-show="!users.length">API server is offline. Run <span class="bg-gray-200 rounded px-2 py-1">yarn api</span>...</div>
+
+  <div x-show="isModalOpen" class="fixed inset-0 z-10 overflow-y-auto bg-opacity-75 bg-gray-500 flex items-center justify-center">
+    <div @click.away="isModalOpen = false" class="bg-white rounded relative">
+      <div class="px-8 py-6 text-4xl border-b">
+        <div>New User</div>
+        <div @click="isModalOpen = false" class="absolute top-2 right-2 cursor-pointer"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></div>
+      </div>
+      <div class="px-8 py-4">
+        <div class="mb-1">username</div>
+        <input x-model="name" class="mb-2 px-3 py-1 border">
+        <div class="mb-1">password</div>
+        <input x-model="password" class="mb-2 px-3 py-1 border">
+      </div>
+      <button @click="
+        yank.post('users', {name: name, password: password, createdAt: Date.now()}).then(response => users = [...users, response.data])
+        name = ''
+        password = ''
+        isModalOpen = false
+        " class="bg-green-500 text-2xl text-white py-4 rounded-bl rounded-br w-full">Create User</button>
+    </div>
+  </div>
 </div>
