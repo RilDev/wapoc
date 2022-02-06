@@ -13,13 +13,13 @@
 <div 
   x-data="{
     users: [],
-    isModalOpen: false, 
+    isModalOpen: false,
     index: '',
     id: '',
-    name: '', 
-    password: '', 
-    isCreateUser: false, 
-    isUpdateUser: false, 
+    name: '',
+    password: '',
+    isCreateUser: false,
+    isUpdateUser: false,
     isDeleteUser: false,
     closeModal() {
       this.isModalOpen = false
@@ -58,14 +58,20 @@
                 @click="
                   isModalOpen = true
                   isUpdateUser = true
-                  console.log('user index', index)
                   index = userIndex
                   id = user.id
                   name = user.name
                   password = user.password
                 " 
                 class="fill-blue-500 cursor-pointer" width="24" height="24" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
-              <svg class="fill-red-500" width="24" height="24" viewBox="0 0 24 24"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg></div>
+              <svg 
+                @click="
+                  isModalOpen = true
+                  isDeleteUser = true
+                  index = userIndex
+                  id = user.id
+                " 
+                class="fill-red-500 cursor-pointer" width="24" height="24" viewBox="0 0 24 24"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg></div>
           </div>
         </div>
       </template>
@@ -86,6 +92,7 @@
       <div class="px-8 py-6 text-4xl border-b">
         <div x-show="isCreateUser">New User</div>
         <div x-show="isUpdateUser">Update User</div>
+        <div x-show="isDeleteUser">Delete User</div>
         <div @click="closeModal" class="absolute top-2 right-2 cursor-pointer"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></div>
       </div>
         <div x-show="isCreateUser || isUpdateUser" class="px-8 py-4">
@@ -93,6 +100,9 @@
           <input x-model="name" class="mb-2 px-3 py-1 border">
           <div class="mb-1">password</div>
           <input x-model="password" class="mb-2 px-3 py-1 border">
+        </div>
+        <div x-show="isDeleteUser" class="px-8 py-4">
+          <div>This action can't be undone!</div>
         </div>
       <button 
         x-show="isCreateUser"
@@ -103,10 +113,15 @@
       <button 
         x-show="isUpdateUser"
         @click="
-          console.log({index})
           yank.patch(`users/${id}`, {name: name, password: password}).then(response => users.splice(index, 1, response.data))
           closeModal()
-        " class="bg-blue-500 text-2xl text-white py-4 rounded-bl rounded-br w-full">Updat User</button>
+        " class="bg-blue-500 text-2xl text-white py-4 rounded-bl rounded-br w-full">Update User</button>
+      <button 
+        x-show="isDeleteUser"
+        @click="
+          yank.delete(`users/${id}`).then(() => users.splice(index, 1))
+          closeModal()
+        " class="bg-red-500 text-2xl text-white py-4 rounded-bl rounded-br w-full">Delete User</button>
     </div>
   </div>
 </div>
