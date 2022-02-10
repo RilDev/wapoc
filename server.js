@@ -24,34 +24,42 @@ app.get('/*', function (req, res) {
 
 // decide what page to serve
 const servePage = (route, res) => {
+  res.status(200)
+
+  // if route is empty, serve index.html page
+  if (!route) {
+    route = 'index.html'
+  }
+
+  // if route points to folder containing index.html
+  if (fs.existsSync(path.join(route, 'index.html'))) {
+    route = path.join(route, 'index.html')
+  }
+
   // if the route points to a file without the .html extenssion
   if(fs.existsSync(route + '.html')) {
     route += '.html'
   }
 
-  if (!route || fs.existsSync(route)) {
-    // if route is empty, serve index.html page
-    if (!route || !fs.statSync(route).isFile()) {
-      route = path.join(route, 'index.html')
-    }
-
-    // load page to serve
-    let file = getFile(route)
-
-    // if page is html file, append live reload script
-    if (route.endsWith('.html')) {
-      file = filesToInject + file
-    }
-
-    // send page
-    res.status(200).end(file)
-  } else {
-    // if the route doesn't match any file, serve 404 page
-    let file = getFile('404.html')
-    file = filesToInject + file
-
-    res.status(404).end(file)
+  // if the route is invalid, get 404
+  if(!fs.existsSync(route) || !path.extname(route)) {
+    route = '404.html'
+    res.status(404)
   }
+
+  console.log('route pre file', route)
+
+  // load page to serve
+  let file = getFile(route)
+
+  // if page is html file, inject scripts
+  if (route.endsWith('.html')) {
+    file = filesToInject + file
+  }
+
+  console.log('route', route)
+
+  res.end(file)
 }
 
 // open web socket port for 2 way communication with client
