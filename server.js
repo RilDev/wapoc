@@ -47,8 +47,6 @@ const servePage = (route, res) => {
     res.status(404)
   }
 
-  console.log('route pre file', route)
-
   // load page to serve
   let file = getFile(route)
 
@@ -56,8 +54,6 @@ const servePage = (route, res) => {
   if (route.endsWith('.html')) {
     file = filesToInject + file
   }
-
-  console.log('route', route)
 
   res.end(file)
 }
