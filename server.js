@@ -4,7 +4,7 @@ const path = require('path')
 const WebSocket = require('ws')
 const app = express()
 
-const getFile = filePath => fs.readFileSync(path.join(__dirname, filePath))
+const getFile = filePath => fs.readFileSync(filePath)
 
 // prepare scripts to inject
 const files = [
@@ -15,7 +15,8 @@ const files = [
   { path: ".wapoc/yank.js" }, // must be loaded after axios
 ]
 
-const filesToInject = "<body>" + files.reduce((full, file) => full + `<script src="${file.path}" ${file.defer ? "defer" : ""}></script>\n\n`, "") + "</body>"
+  const filesToInject = files.reduce((full, file) => full + `<script ${file.defer ? "defer" : ""}>${getFile(file.path)}</script>\n\n`, "")
+
 
 // catch all get requests
 app.get('/*', function (req, res) {
