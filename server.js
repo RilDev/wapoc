@@ -24,6 +24,11 @@ app.get('/*', function (req, res) {
 
 // decide what page to serve
 const servePage = (route, res) => {
+  // if the route points to a file without the .html extenssion
+  if(fs.existsSync(route + '.html')) {
+    route += '.html'
+  }
+
   if (!route || fs.existsSync(route)) {
     // if route is empty, serve index.html page
     if (!route || !fs.statSync(route).isFile()) {
