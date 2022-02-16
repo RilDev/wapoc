@@ -1,3 +1,4 @@
+test
 <div class="text-center px-4 py-12">
 <h1 class="font-bold text-4xl mb-6">WAPOC</h1>
 <p class="mb-12">Web App Proof Of Concept</p>
@@ -11,7 +12,27 @@
 
 <!-- Users' Table -->
 <div 
-  x-data="{users: [], isModalOpen: false, name: '', password: ''}" 
+  x-data="{
+    users: [],
+    isModalOpen: false,
+    index: '',
+    id: '',
+    name: '',
+    password: '',
+    isCreateUser: false,
+    isUpdateUser: false,
+    isDeleteUser: false,
+    closeModal() {
+      this.isModalOpen = false
+      this.isCreateUser = false
+      this.isUpdateUser = false
+      this.isDeleteUser = false
+      index: ''
+      id = ''
+      this.name = ''
+      this.password = ''
+    }
+  }" 
   x-init="yank.get('users').then(response => users = response.data)"
   x-cloak
   >
@@ -21,42 +42,87 @@
         <div class="table-cell p-4 rounded-tl">id</div>
         <div class="table-cell p-4">username</div>
         <div class="table-cell p-4">password</div>
-        <div class="table-cell p-4 rounded-tr">created at</div>
+        <div class="table-cell p-4">created at</div>
+        <div class="table-cell p-4 rounded-tr">options</div>
       </div>
     </div>
     <div class="table-row-group">
-      <template x-for="user in users">
+      <template x-for="(user, userIndex) in users">
         <div class="table-row">
           <div class="table-cell py-2 border" x-text="user.id"></div>
           <div class="table-cell py-2 border" x-text="user.name"></div>
           <div class="table-cell py-2 border" x-text="user.password"></div>
           <div class="table-cell py-2 border" x-text="user.createdAt"></div>
+          <div class="table-cell py-2 border">
+            <div class="flex justify-around">
+              <svg 
+                @click="
+                  isModalOpen = true
+                  isUpdateUser = true
+                  index = userIndex
+                  id = user.id
+                  name = user.name
+                  password = user.password
+                " 
+                class="fill-blue-500 cursor-pointer" width="24" height="24" viewBox="0 0 24 24"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" /></svg>
+              <svg 
+                @click="
+                  isModalOpen = true
+                  isDeleteUser = true
+                  index = userIndex
+                  id = user.id
+                " 
+                class="fill-red-500 cursor-pointer" width="24" height="24" viewBox="0 0 24 24"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" /></svg></div>
+          </div>
         </div>
       </template>
     </div>
   </div>
-  <button x-show="users.length" @click="isModalOpen = true" class="w-full border border-t-0 rounded-bl rounded-br bg-green-500 text-white text-2xl py-2">+</button>
+  <button 
+    @click="
+      isModalOpen = true
+      isCreateUser = true
+    " 
+    x-show="users.length"
+    class="w-full border border-t-0 rounded-bl rounded-br bg-green-500 text-white text-2xl py-2">+</button>
 
   <div x-show="!users.length">API server is offline. Run <span class="bg-gray-200 rounded px-2 py-1">yarn api</span>...</div>
 
   <div x-show="isModalOpen" class="fixed inset-0 z-10 overflow-y-auto bg-opacity-75 bg-gray-500 flex items-center justify-center">
-    <div @click.away="isModalOpen = false" class="bg-white rounded relative">
+    <div @click.away="closeModal" class="bg-white rounded relative">
       <div class="px-8 py-6 text-4xl border-b">
-        <div>New User</div>
-        <div @click="isModalOpen = false" class="absolute top-2 right-2 cursor-pointer"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></div>
+        <div x-show="isCreateUser">New User</div>
+        <div x-show="isUpdateUser">Update User</div>
+        <div x-show="isDeleteUser">Delete User</div>
+        <div @click="closeModal" class="absolute top-2 right-2 cursor-pointer"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></div>
       </div>
-      <div class="px-8 py-4">
-        <div class="mb-1">username</div>
-        <input x-model="name" class="mb-2 px-3 py-1 border">
-        <div class="mb-1">password</div>
-        <input x-model="password" class="mb-2 px-3 py-1 border">
-      </div>
-      <button @click="
-        yank.post('users', {name: name, password: password, createdAt: Date.now()}).then(response => users = [...users, response.data])
-        name = ''
-        password = ''
-        isModalOpen = false
+        <div x-show="isCreateUser || isUpdateUser" class="px-8 py-4">
+          <div class="mb-1">username</div>
+          <input x-model="name" class="mb-2 px-3 py-1 border">
+          <div class="mb-1">password</div>
+          <input x-model="password" class="mb-2 px-3 py-1 border">
+        </div>
+        <div x-show="isDeleteUser" class="px-8 py-4">
+          <div>This action can't be undone!</div>
+        </div>
+      <button 
+        x-show="isCreateUser"
+        @click="
+          yank.post('users', {name: name, password: password, createdAt: Date.now()}).then(response => users = [...users, response.data])
+          closeModal()
         " class="bg-green-500 text-2xl text-white py-4 rounded-bl rounded-br w-full">Create User</button>
+      <button 
+        x-show="isUpdateUser"
+        @click="
+          yank.patch(`users/${id}`, {name: name, password: password}).then(response => users.splice(index, 1, response.data))
+          closeModal()
+        " class="bg-blue-500 text-2xl text-white py-4 rounded-bl rounded-br w-full">Update User</button>
+      <button 
+        x-show="isDeleteUser"
+        @click="
+          yank.delete(`users/${id}`).then(() => users.splice(index, 1))
+          closeModal()
+        " class="bg-red-500 text-2xl text-white py-4 rounded-bl rounded-br w-full">Delete User</button>
     </div>
   </div>
 </div>

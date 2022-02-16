@@ -1,11 +1,12 @@
 {
   "scripts": {
-    "ui": "forever -w server.js",
+    "ui": "node server.js",
     "api": "json-server .wapoc/db.json --port 4000 --watch db.json"
   },
   "dependencies": {
     "alpinejs": "^3.8.1",
     "axios": "^0.25.0",
+    "chokidar": "^3.5.3",
     "express": "^4.17.2",
     "forever": "^4.0.2",
     "json-server": "^0.17.0",
