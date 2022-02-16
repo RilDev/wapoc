@@ -2,6 +2,7 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 const WebSocket = require('ws')
+const chokidar = require('chokidar')
 const app = express()
 
 const getFile = filePath => fs.readFileSync(filePath)
@@ -60,7 +61,18 @@ const servePage = (route, res) => {
 }
 
 // open web socket port for 2 way communication with client
-new WebSocket.Server({port: 3001})
+let server = new WebSocket.Server({port: 3001})
 // start api server
+app.on('connection', socket => {
+  console.log('connection', socket)
+})
 app.listen(3000)
 
+chokidar.watch('.', {ignored: 'node_modules|\.git|db\.json'}).on('change', (path) => {
+  console.log(path, "changed!");
+  console.log('restart server')
+  Object.keys(require.cache).forEach(function(id) {
+    if (/[\/\\]app[\/\\]/.test(id)) delete require.cache[id]
+  })
+});
+// https://www.javaer101.com/de/article/30004455.html
