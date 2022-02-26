@@ -3,14 +3,16 @@ const spawn = require('child_process').spawn
 const chokidar = require('chokidar')
 const path = require('path')
 
+const cwd = process.cwd()
+
 const spawnServer = () => {
-  return spawn('node', ['server.js'])
+  return spawn('node', [path.join(cwd, '.wapoc/server.js')])
 }
 
 let server = spawnServer()
 
 const fileWatcher = () => {
-  const watchedPaths = path.join(process.cwd(), '/**/*')
+  const watchedPaths = path.join(cwd, '/**/*')
   const ignoredPaths = /node_modules|db.json/
 
   chokidar.watch(watchedPaths, {ignored: ignoredPaths}).on('change', (event, path) => {

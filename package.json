@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "concurrently 'yarn ui' 'yarn api'",
-    "ui": "node file-watcher.js",
+    "ui": "node .wapoc/file-watcher.js",
     "api": "json-server .wapoc/db.json --port 4000 --watch db.json",
     "start": "node server.js"
   },
