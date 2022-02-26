@@ -1,7 +1,9 @@
 {
   "scripts": {
-    "ui": "node server.js",
-    "api": "json-server .wapoc/db.json --port 4000 --watch db.json"
+    "dev": "concurrently 'yarn ui' 'yarn api'",
+    "ui": "node file-watcher.js",
+    "api": "json-server .wapoc/db.json --port 4000 --watch db.json",
+    "start": "node server.js"
   },
   "dependencies": {
     "alpinejs": "^3.8.1",
@@ -11,5 +13,8 @@
     "forever": "^4.0.2",
     "json-server": "^0.17.0",
     "ws": "^8.4.2"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0"
   }
 }
