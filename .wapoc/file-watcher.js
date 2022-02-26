@@ -1,4 +1,3 @@
-// file watcher
 const spawn = require('child_process').spawn
 const chokidar = require('chokidar')
 const path = require('path')
@@ -15,9 +14,9 @@ const fileWatcher = () => {
   const watchedPaths = path.join(cwd, '/**/*')
   const ignoredPaths = /node_modules|db.json/
 
-  chokidar.watch(watchedPaths, {ignored: ignoredPaths}).on('change', (event, path) => {
-    console.log(event)
-    console.log('reload...')
+  chokidar.watch(watchedPaths, {ignored: ignoredPaths}).on('change', path => {
+    console.log('changed', path)
+    console.log('reloading...')
     reload()
   })
 }
