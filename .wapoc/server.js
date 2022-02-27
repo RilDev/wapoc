@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const WebSocket = require('ws')
 const app = express()
+const customElementGenerator = require('./custom-element-generator.js')
 
 const getFile = filePath => fs.readFileSync(filePath)
 
@@ -15,7 +16,8 @@ const files = [
   { path: ".wapoc/yank.js" }, // must be loaded after axios
 ]
 
-  const filesToInject = files.reduce((full, file) => full + `<script ${file.defer ? "defer" : ""}>${getFile(file.path)}</script>\n\n`, "")
+let filesToInject = files.reduce((full, file) => full + `<script ${file.defer ? "defer" : ""}>${getFile(file.path)}</script>\n\n`, "")
+filesToInject += `<script>${customElementGenerator()}</script>`
 
 
 // catch all get requests
