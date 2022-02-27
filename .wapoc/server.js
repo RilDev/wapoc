@@ -28,6 +28,9 @@ app.get('/*', function (req, res) {
 // decide what page to serve
 const servePage = (route, res) => {
   res.status(200)
+  const originDir = 'pages'
+  route = path.join(originDir, route)
+  console.log('route', route)
 
   // if route is empty, serve index.html page
   if (!route) {
