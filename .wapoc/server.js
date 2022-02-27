@@ -2,8 +2,8 @@ const express = require('express')
 const fs = require('fs')
 const path = require('path')
 const WebSocket = require('ws')
-const chokidar = require('chokidar')
 const app = express()
+const customElementGenerator = require('./custom-element-generator.js')
 
 const getFile = filePath => fs.readFileSync(filePath)
 
@@ -16,7 +16,8 @@ const files = [
   { path: ".wapoc/yank.js" }, // must be loaded after axios
 ]
 
-  const filesToInject = files.reduce((full, file) => full + `<script ${file.defer ? "defer" : ""}>${getFile(file.path)}</script>\n\n`, "")
+let filesToInject = files.reduce((full, file) => full + `<script ${file.defer ? "defer" : ""}>${getFile(file.path)}</script>\n\n`, "")
+filesToInject += `<script>${customElementGenerator()}</script>`
 
 
 // catch all get requests
@@ -27,6 +28,9 @@ app.get('/*', function (req, res) {
 // decide what page to serve
 const servePage = (route, res) => {
   res.status(200)
+  const originDir = 'pages'
+  route = path.join(originDir, route)
+  console.log('route', route)
 
   // if route is empty, serve index.html page
   if (!route) {
@@ -67,12 +71,3 @@ app.on('connection', socket => {
   console.log('connection', socket)
 })
 app.listen(3000)
-
-chokidar.watch('.', {ignored: 'node_modules|\.git|db\.json'}).on('change', (path) => {
-  console.log(path, "changed!");
-  console.log('restart server')
-  Object.keys(require.cache).forEach(function(id) {
-    if (/[\/\\]app[\/\\]/.test(id)) delete require.cache[id]
-  })
-});
-// https://www.javaer101.com/de/article/30004455.html
