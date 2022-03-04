@@ -1,0 +1,11 @@
+version: "3"
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: .wapoc/docker/Dockerfile-ui
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - .:/app
